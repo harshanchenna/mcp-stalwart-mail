@@ -49,6 +49,7 @@ def _send_via_smtp(
     body: str,
     html_body: str | None = None,
     from_addr: str | None = None,
+    cc: list[str] | None = None,
 ) -> None:
     """Send an email via SMTP. Raises on failure."""
     sender = from_addr or SMTP_FROM
@@ -63,6 +64,9 @@ def _send_via_smtp(
     msg["Subject"] = subject
     msg["From"] = sender
     msg["To"] = ", ".join(to)
+    if cc:
+        msg["Cc"] = ", ".join(cc)
+    recipients = to + (cc or [])
 
     if SMTP_USE_TLS:
         # SMTPS (implicit TLS, typically port 465)
@@ -70,14 +74,14 @@ def _send_via_smtp(
         with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, context=context) as smtp:
             if SMTP_USERNAME:
                 smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
-            smtp.sendmail(sender, to, msg.as_string())
+            smtp.sendmail(sender, recipients, msg.as_string())
     else:
         with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as smtp:
             if SMTP_USE_STARTTLS:
                 smtp.starttls()
             if SMTP_USERNAME:
                 smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
-            smtp.sendmail(sender, to, msg.as_string())
+            smtp.sendmail(sender, recipients, msg.as_string())
 
 
 # ---------------------------------------------------------------------------
@@ -106,6 +110,7 @@ def send_email(
     to_list = [addr.strip() for addr in to.split(",") if addr.strip()]
     if not to_list:
         return "Error: no valid recipients provided."
+    cc_list = [addr.strip() for addr in (cc or "").split(",") if addr.strip()]
 
     try:
         _send_via_smtp(
@@ -113,11 +118,14 @@ def send_email(
             subject=subject,
             body=body,
             html_body=html_body,
+            cc=cc_list,
         )
     except Exception as exc:
         return f"Error sending email: {exc}"
 
     recipients_str = ", ".join(to_list)
+    if cc_list:
+        recipients_str += f" (cc: {', '.join(cc_list)})"
     return f"Email sent successfully to {recipients_str} | Subject: {subject!r}"
 
 
