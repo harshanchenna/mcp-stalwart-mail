@@ -20,14 +20,20 @@ services required to develop against (SMTP config is supplied by whoever runs th
 ## Build, test, lint
 
 ```bash
-uv sync                                          # install deps into .venv
+uv sync --extra dev                              # install deps into .venv
 uv run python -c "import stalwart_mail_mcp.server"  # quick import/smoke check
 uv run stalwart-mail-mcp                         # run the server (stdio transport)
 ```
 
-There is no automated test suite or linter configured yet. If you add meaningful logic beyond
-straightforward SMTP calls, add `pytest` (as a `dev` optional-dependency group) rather than leaving
-it untested.
+A `pytest` suite (`dev` optional-dependency group, run with `uv run --extra dev pytest -q`) covers
+the formatting helpers and tool registration; CI runs it on every push and PR. Extend it alongside
+any new tool or logic change.
+
+## Releasing
+
+Bump the version in `pyproject.toml` and `server.json` together, then push a `v<version>` tag.
+`release.yml` checks the three agree, runs the tests, publishes to PyPI via Trusted Publishing, and
+then publishes `server.json` to the MCP registry. No tokens are stored in the repo.
 
 ## Standards this repo owns
 
