@@ -49,7 +49,6 @@ def test_send_email_success_path(monkeypatch) -> None:
     assert sent["sender"] == server.SMTP_FROM
 
 
-
 def test_send_email_delivers_to_cc(monkeypatch) -> None:
     sent: dict = {}
 
