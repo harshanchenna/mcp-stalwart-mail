@@ -1,0 +1,78 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.harshanchenna/mcp-stalwart-mail",
+  "description": "MCP server that sends email over SMTP (Stalwart, Postfix, Gmail SMTP, or any SMTP-capable server), configured entirely through environment variables.",
+  "repository": {
+    "url": "https://github.com/harshanchenna/mcp-stalwart-mail.git",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "stalwart-mail-mcp",
+      "version": "0.1.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SMTP_HOST",
+          "description": "SMTP server hostname",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "localhost"
+        },
+        {
+          "name": "SMTP_PORT",
+          "description": "SMTP port (25 = relay, 587 = STARTTLS, 465 = SMTPS)",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "25"
+        },
+        {
+          "name": "SMTP_FROM",
+          "description": "From address for all outbound mail",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "agent@example.com"
+        },
+        {
+          "name": "SMTP_USERNAME",
+          "description": "SMTP auth username (leave empty for no-auth relay)",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "SMTP_PASSWORD",
+          "description": "SMTP auth password",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "SMTP_USE_TLS",
+          "description": "Use implicit TLS/SMTPS (port 465)",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "false"
+        },
+        {
+          "name": "SMTP_USE_STARTTLS",
+          "description": "Use STARTTLS upgrade (port 587)",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "false"
+        },
+        {
+          "name": "NOTIFY_TO",
+          "description": "Default recipient for send_notification",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "user@example.com"
+        }
+      ]
+    }
+  ]
+}

@@ -24,8 +24,13 @@ dependencies = [
     "mcp[cli]>=1.0.0",
 ]
 
+[project.optional-dependencies]
+dev = ["pytest>=8.0.0"]
+
 [project.urls]
+Homepage = "https://github.com/harshanchenna/mcp-stalwart-mail"
 Repository = "https://github.com/harshanchenna/mcp-stalwart-mail"
+Issues = "https://github.com/harshanchenna/mcp-stalwart-mail/issues"
 
 [project.scripts]
 stalwart-mail-mcp = "stalwart_mail_mcp.server:main"

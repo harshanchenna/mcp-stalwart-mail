@@ -1,8 +1,16 @@
 # stalwart-mail-mcp
 
+<!-- mcp-name: io.github.harshanchenna/mcp-stalwart-mail -->
+
 MCP server for sending email via a [Stalwart](https://stalw.art/) mail server using SMTP.
 
 Stalwart is a modern, self-hosted mail server. This MCP server exposes two tools that let Claude Code agents send emails and notifications through any SMTP-capable mail server — including Stalwart, but also standard SMTP relays, Gmail SMTP, etc.
+
+## Quick start
+
+```bash
+uvx --from stalwart-mail-mcp stalwart-mail-mcp
+```
 
 ## Tools
 
@@ -29,6 +37,46 @@ All settings are via environment variables:
 For an internal Stalwart instance on a trusted network, port 25 relay with no auth is the simplest setup. For external SMTP (e.g. Gmail), use port 587 with `SMTP_USE_STARTTLS=true` and credentials.
 
 ## Installation
+
+### Published package with uvx
+
+```bash
+# No-auth relay
+claude mcp add stalwart-mail \
+  -e SMTP_HOST=your-mail-server \
+  -e SMTP_PORT=25 \
+  -e SMTP_FROM=agent@yourdomain.com \
+  -e NOTIFY_TO=you@yourdomain.com \
+  -- uvx --from stalwart-mail-mcp stalwart-mail-mcp
+
+# STARTTLS with auth
+claude mcp add stalwart-mail \
+  -e SMTP_HOST=smtp.gmail.com \
+  -e SMTP_PORT=587 \
+  -e SMTP_FROM=you@gmail.com \
+  -e SMTP_USERNAME=you@gmail.com \
+  -e SMTP_PASSWORD=your-app-password \
+  -e SMTP_USE_STARTTLS=true \
+  -e NOTIFY_TO=you@gmail.com \
+  -- uvx --from stalwart-mail-mcp stalwart-mail-mcp
+```
+
+```json
+{
+  "mcpServers": {
+    "stalwart-mail": {
+      "command": "uvx",
+      "args": ["--from", "stalwart-mail-mcp", "stalwart-mail-mcp"],
+      "env": {
+        "SMTP_HOST": "your-mail-server",
+        "SMTP_PORT": "25",
+        "SMTP_FROM": "agent@yourdomain.com",
+        "NOTIFY_TO": "you@yourdomain.com"
+      }
+    }
+  }
+}
+```
 
 ### From source with uv
 
