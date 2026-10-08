@@ -49,6 +49,33 @@ def test_send_email_success_path(monkeypatch) -> None:
     assert sent["sender"] == server.SMTP_FROM
 
 
+def test_send_email_delivers_to_cc(monkeypatch) -> None:
+    sent: dict = {}
+
+    class _FakeSMTP:
+        def __init__(self, host, port):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+        def sendmail(self, sender, to, msg):
+            sent["to"] = to
+            sent["msg"] = msg
+
+    monkeypatch.setattr(server.smtplib, "SMTP", _FakeSMTP)
+
+    result = server.send_email(to="alice@example.com", subject="S", body="B", cc="bob@example.com, carol@example.com")
+
+    assert "sent successfully" in result.lower()
+    assert sent["to"] == ["alice@example.com", "bob@example.com", "carol@example.com"]
+    assert "Cc: bob@example.com, carol@example.com" in sent["msg"]
+    assert "bob@example.com" in result
+
+
 def test_send_email_reports_smtp_failure(monkeypatch) -> None:
     class _FailingSMTP:
         def __init__(self, *a, **k):
